@@ -53,5 +53,33 @@ def model_choice(model_class):
 
   return llm
 
-def model_response(user_query, chat_history, ):
+def model_response(user_query, chat_history):
   llm = model_choice()
+
+  # Definição dos prompts
+  system_prompt = """
+    Você é um assistente prestativo e está responedndo perguntas gerais responda em {language}
+  """
+  language = "portugues"
+
+  if model_class.startswith("hf"):
+    user_prompt = "<|begin_of_text|><|start_header_id|>user<|end_header_id|>\n{input}<|eot_id|><|start_header_id|>assistant<|end_header_id|>"
+  else:
+    user_prompt = "{input}"
+  
+  prompt_template = ChatPromptTemplate.from_messages([
+    ("system", system_prompt),
+    MessagesPlaceholder(variable_name="chat_history"),
+    ("user", user_prompt)
+  ])
+
+  # Criação da Chain
+  chain = prompt_template | llm | StrOutputParser()
+
+  # Retorno da resposta / Stream
+  # Diferente do .invoke o .stream retorna a mensagem em tempo real (durante a construção)
+  return chain.stream({
+    "chat_history": chat_history,
+    "input": user_query,
+    "language": language
+  })
