@@ -83,3 +83,15 @@ def model_response(user_query, chat_history):
     "input": user_query,
     "language": language
   })
+
+if "chat_history" not in st.session_state:
+  st.session_state.chat_history = [AIMessage(content="Olá sou seu assistente virtual! Como posso ajudar?")]
+
+
+for message in st.session_state.chat_history:
+  if isinstance(message, AIMessage):
+    with st.chat_message("AI"):
+      st.write(message.content)
+  elif isinstance(message, HumanMessage):
+    with st.chat_message("Human"):
+      st.write(message.content)
