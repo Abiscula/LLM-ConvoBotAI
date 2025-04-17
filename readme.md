@@ -1,6 +1,6 @@
-# LLM Chatbot AI
+# LLM-ConvoBotAI
 
-Este é um projeto de chatbot AI que utiliza modelos locais de linguagem (LLM) para conversas contínuas. O chatbot pode ser executado em ambientes Windows com suporte ao modelo manual (Phi-3), além de oferecer a possibilidade de usar o **Ollama** como backend local em qualquer sistema operacional. Também é possível integrar com a **Hugging Face** para usar modelos pré-treinados disponíveis na plataforma.
+Este é um projeto de chatbot AI que utiliza modelos locais de linguagem (LLM) para conversas contínuas, mantendo o contexto da sessão. Ou seja, durante uma conversa, o chatbot consegue "lembrar" das interações anteriores, permitindo uma experiência mais fluida e natural. O chatbot pode ser executado em ambientes Windows com suporte ao modelo manual (Phi-3), além de oferecer a possibilidade de usar o **Ollama** como backend local em qualquer sistema operacional. Também é possível integrar com a **Hugging Face** para usar modelos pré-treinados disponíveis na plataforma.
 
 ## Tecnologias Utilizadas
 
