@@ -11,6 +11,9 @@ import torch
 from langchain_huggingface import ChatHuggingFace
 from langchain_huggingface import HuggingFaceEndpoint
 
+from enum import Enum
+
+
 from config import load_config
 
 config = load_config()
@@ -22,7 +25,11 @@ st.title("Assistente virtual 🤖")
 # st.button("Botão")
 # st.chat_input("Digite sua mensagem")
 
-model_class = "hf_hub"
+class ModelClass(Enum):
+  HF_HUB = "hf_hub"
+  OLLAMA = "ollama"
+
+model_class = ModelClass.HF_HUB
 
 def model_hf_hub(model="meta-llama/Meta-Llama-3-8B-Instruct", temperature=0.1):
   llm = HuggingFaceEndpoint(repo_id=model,
@@ -36,3 +43,15 @@ def model_hf_hub(model="meta-llama/Meta-Llama-3-8B-Instruct", temperature=0.1):
 def model_ollama(model="phi3", temperature=0.1):
   llm = ChatOllama(model=model, temperature=temperature)
   return llm
+
+def model_choice(model_class):
+  #carrega a llm
+  if model_class == ModelClass.HF_HUB:
+    llm = model_hf_hub()
+  elif model_class == ModelClass.OLLAMA:
+    llm = model_ollama()
+
+  return llm
+
+def model_response(user_query, chat_history, ):
+  llm = model_choice()
