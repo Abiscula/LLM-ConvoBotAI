@@ -10,3 +10,14 @@ from langchain_core.prompts import ChatPromptTemplate
 import torch
 from langchain_huggingface import ChatHuggingFace
 from langchain_huggingface import HuggingFaceEndpoint
+
+from config import load_config
+
+config = load_config()
+hf_token = config['HF_TOKEN']
+
+# Configurações streamlit
+st.set_page_config(page_title="Assistente virtual 🤖", page_icon="🤖")
+st.title("Assistente virtual 🤖")
+# st.button("Botão")
+# st.chat_input("Digite sua mensagem")
