@@ -76,15 +76,15 @@ Substitua seu_token_da_hugging_face pelo seu token da API da Hugging Face, que p
 
 Para usar o Ollama, você precisará instalar o aplicativo Ollama localmente.
 
-    1.	Instale o Ollama:
-    •	Para Windows: Faça o download e instale o Ollama a partir do site oficial do Ollama.
-    •	Para MacOS e Linux: Utilize o Homebrew para instalar o Ollama:
+   1.	Instale o Ollama:
+   •	Para Windows: Faça o download e instale o Ollama a partir do site oficial do Ollama.
+   •	Para MacOS e Linux: Utilize o Homebrew para instalar o Ollama:
 
 ```bash
  brew install ollama
 ```
 
-    2.	Inicie o servidor Ollama:
+   2.	Inicie o servidor Ollama:
 
 Execute o seguinte comando para iniciar o servidor Ollama em sua máquina:
 
