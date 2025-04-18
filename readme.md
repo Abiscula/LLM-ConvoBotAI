@@ -1,10 +1,25 @@
 # LLM-ConvoBotAI
 
-Este é um projeto de chatbot AI que utiliza modelos locais de linguagem (LLM) para conversas contínuas, mantendo o contexto da sessão. Ou seja, durante uma conversa, o chatbot consegue "lembrar" das interações anteriores, permitindo uma experiência mais fluida e natural. O chatbot pode ser executado em ambientes Windows com suporte ao modelo manual (Phi-3), além de oferecer a possibilidade de usar o **Ollama** como backend local em qualquer sistema operacional. Também é possível integrar com a **Hugging Face** para usar modelos pré-treinados disponíveis na plataforma.
+Este é um projeto de chatbot AI que utiliza modelos locais de linguagem (LLM) para conversas contínuas, mantendo o contexto da sessão. Ou seja, durante uma conversa, o chatbot consegue “lembrar” das interações anteriores, permitindo uma experiência mais fluida e natural.
 
-Diferente do projeto [AI-chatbot](https://github.com/Abiscula/AI-chatbot) que implementei com o Groq, este oferece uma maior flexibilidade na escolha do modelo de linguagem, permitindo ao usuário selecionar entre uma ampla variedade de modelos, como o GPT-3 ou Phi-3, conforme suas necessidades. O suporte a diferentes provedores, como o Ollama e Hugging Face, permite que o chatbot seja executado em diversos sistemas, com a possibilidade de escolher entre uma solução local (para Windows) ou via API. Isso dá aos usuários mais controle sobre o modelo que estão utilizando e como o chatbot é configurado, sem a necessidade de depender de uma solução única. Além disso, o LLM-ConvoBotAI foi otimizado para uma experiência mais fluida, com um sistema de manutenção de contexto robusto e sem limitações de infraestrutura, o que não era possível com a solução anterior baseada no Groq.
+Além disso, o LLM-ConvoBotAI agora conta com um novo fluxo interativo que permite ao usuário escolher entre:
+• Conversar com o assistente (modo tradicional de chatbot)
+• Analisar um arquivo/documento com a ajuda da IA (modo análise)
 
-## Tecnologias Utilizadas
+Esse diferencial torna o projeto mais flexível e poderoso, permitindo interações tanto informais quanto análises de conteúdo mais estruturadas.
+
+## 🧠 Diferenças para o projeto anterior
+
+Diferente do projeto [AI-chatbot](https://github.com/Abiscula/AI-chatbot) que implementei com o Groq, este oferece maior flexibilidade na escolha do modelo de linguagem, permitindo ao usuário selecionar entre uma ampla variedade de LLMs (como GPT-3, Phi-3, entre outros), conforme suas necessidades.
+
+O suporte a diferentes provedores — Ollama, Hugging Face, e modelo manual local — permite que o chatbot seja executado em diversos sistemas operacionais com liberdade total de configuração.
+
+Além disso, o novo sistema de fluxo do assistente permite que o usuário:
+• Escolha entre iniciar uma conversa tradicional com o chatbot ou fazer a leitura e análise de um arquivo (como PDFs, textos, etc.).
+• Utilize o mesmo modelo de linguagem em ambos os fluxos.
+• Mantenha o contexto da sessão para interações mais inteligentes.
+
+## 🛠 Tecnologias Utilizadas
 
 - **Python**: Linguagem de programação principal.
 - **Ollama**: Plataforma para executar LLMs localmente.
@@ -13,7 +28,7 @@ Diferente do projeto [AI-chatbot](https://github.com/Abiscula/AI-chatbot) que im
 - **LangChain**: Biblioteca usada para integrar LLMs e orquestrar conversas.
 - **Hugging Face**: Para usar modelos pré-treinados via API.
 
-## Como Rodar o Projeto
+## 🚀 Como Rodar o Projeto
 
 ### 1. Pré-requisitos
 
@@ -98,8 +113,10 @@ Se você preferir usar um modelo pré-treinado da Hugging Face, você pode confi
 3. Execute o chatbot:
    Com a API configurada, basta rodar o chatbot com o modelo desejado. O código irá automaticamente se conectar à Hugging Face para carregar o modelo e utilizá-lo para gerar as respostas.
 
-### 4. Restrição do Modelo Local no Windows
+## 🖥️ Compatibilidade
 
-• Ollama funciona em qualquer sistema operacional (Windows, MacOS, Linux).
-• Modelo manual (Phi-3) tem suporte específico para dispositivos Windows, devido à necessidade de carregar modelos quantizados manualmente.
-• Hugging Face pode ser usado em qualquer sistema operacional, desde que a API Key esteja configurada corretamente.
+| Backend       | Windows | MacOS | Linux |
+| ------------- | ------- | ----- | ----- |
+| Ollama        | ✅      | ✅    | ✅    |
+| Modelo Manual | ✅      | ❌    | ❌    |
+| Hugging Face  | ✅      | ✅    | ✅    |
