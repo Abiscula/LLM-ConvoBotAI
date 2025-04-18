@@ -115,7 +115,7 @@ Se você preferir usar um modelo pré-treinado da Hugging Face, você pode confi
 
 ## 🖥️ Compatibilidade
 
-| Backend       | Windows | MacOS | Linux |
+| Modelo usado  | Windows | MacOS | Linux |
 | ------------- | ------- | ----- | ----- |
 | Ollama        | ✅      | ✅    | ✅    |
 | Modelo Manual | ✅      | ❌    | ❌    |
