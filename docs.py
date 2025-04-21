@@ -6,10 +6,17 @@ from langchain_community.embeddings import HuggingFaceEmbeddings
 from langchain_community.vectorstores import FAISS
 from langchain_core.prompts import ChatPromptTemplate, PromptTemplate
 from langchain_core.prompts import MessagesPlaceholder
-
+from langchain.chains.retrieval import create_retrieval_chain
+from langchain.chains.history_aware_retriever import create_history_aware_retriever
+from langchain.chains.combine_documents import create_stuff_documents_chain
 
 import os
 import tempfile
+from enum import Enum
+
+class PromptType(Enum):
+  CONTEXT = "CONTEXT"
+  QA = "QA"
 
 # Fluxo de upload
 def upload_flow():
@@ -55,14 +62,8 @@ def config_retriever(uploads):
     
     return retriever
   
-
-def prompt_define(model_class):
-  if model_class.model == ModelClass.HF_HUB:
-    token_s, token_e = "<|begin_of_text|><|start_header_id|>system<|end_header_id|>", "<|eot_id|><|start_header_id|>assistant<|end_header_id|>"
-  else:
-    token_s, token_e = "", ""
-
-  # Prompt de contextualização
+# Define o prompt de contextualização
+def context_prompt(token_s, token_e):
   context_q_system_prompt = "Given the following chat history and the follow-up question which might reference " \
   "context in the chat history, formulate a standalone question which can be understood without the chat history. " \
   "Do NOT answer the question, just reformulate it if needed and otherwise return it as is."
@@ -76,10 +77,48 @@ def prompt_define(model_class):
       ("human", context_q_user_prompt),
     ]
   )
-  return context_q_system_prompt, context_q_user_prompt, context_q_prompt
+  return context_q_prompt
+
+# Define o prompt de perguntas e respostas (QA: Question & Answer)
+def qa_prompt(token_s, token_e):
+  qa_prompt_template = """Você é um assistente virtual prestativo e está respondendo perguntas gerais.
+  Use os seguintes pedaços de contexto recuperado para responder à pergunta.
+  Se você não sabe a resposta, apenas diga que não sabe. Mantenha a resposta concisa.
+  Responda em português. \n\n
+  Pergunta: {input} \n
+  Contexto: {context}"""
+
+  qa_prompt = PromptTemplate.from_template(token_s + qa_prompt_template + token_e)
+  return qa_prompt
+
+# Retorna o prompt com base no type
+def prompt_define(model_class, type: PromptType):
+  if model_class.model == ModelClass.HF_HUB:
+    token_s, token_e = "<|begin_of_text|><|start_header_id|>system<|end_header_id|>", "<|eot_id|><|start_header_id|>assistant<|end_header_id|>"
+  else:
+    token_s, token_e = "", ""
+
+  if type == PromptType.CONTEXT:
+    context_q_prompt = context_prompt(token_s, token_e);
+    return context_q_prompt
+  
+  elif type == PromptType.QA:
+    prompt = qa_prompt(token_s, token_e)
+    return prompt
   
 def config_rag_chain(model, retriever):
-  system_prompt, user_prompt, context_prompt = prompt_define(model)
+  context_prompt = prompt_define(model, PromptType.CONTEXT)
+  history_aware_retriever = create_history_aware_retriever(llm=model, retriever=retriever, prompt=context_prompt)
+
+  # Configurar Chain para perguntas e respostas (Q&A)
+  qa_prompt = prompt_define(model, PromptType.QA)
+  qa_chain = create_stuff_documents_chain(model, qa_prompt)
+
+  rag_chain = create_retrieval_chain(
+    history_aware_retriever,
+    qa_chain,
+  )
+  return rag_chain
 
 def render():
   st.header("Converse com documentos")
@@ -87,4 +126,4 @@ def render():
   retriever = config_retriever(uploads)
   model_class = model_choice(st.session_state.model_class)
 
-  config_rag_chain(model_class, retriever)
+  rag_chain = config_rag_chain(model_class, retriever)
