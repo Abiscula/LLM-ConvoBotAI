@@ -7,36 +7,28 @@ from shared import ModelClass
 
 def select_model_class():
   if "model_class" not in st.session_state:
-    st.session_state.model_class = ModelClass.HF_HUB
+    st.session_state.model_class = None
 
   if platform.system() == "Windows":
-    selected_model = st.selectbox(
-      "Escolha o modelo:",
-      options=list(ModelClass),
-      format_func=lambda m: (
-        "Hugging Face" if m == ModelClass.HF_HUB else
-        "Local (Phi-3)" if m == ModelClass.LOCAL else
-        "Ollama"
-      ),
-      index=list(ModelClass).index(st.session_state.model_class)
-    )
+    model_options = list(ModelClass)
   else:
-    available_models = [ModelClass.HF_HUB, ModelClass.OLLAMA]
-    try:
-      selected_index = available_models.index(st.session_state.model_class)
-    except ValueError:
-      selected_index = 0
-      st.session_state.model_class = ModelClass.HF_HUB
+    model_options = [ModelClass.HF_HUB, ModelClass.OLLAMA]
 
-    selected_model = st.selectbox(
-      "Escolha o modelo:",
-      options=available_models,
-      format_func=lambda m: "Hugging Face" if m == ModelClass.HF_HUB else "Ollama",
-      index=selected_index
-    )
+  label_map = {
+    ModelClass.HF_HUB: "Hugging Face",
+    ModelClass.LOCAL: "Local (Phi-3)",
+    ModelClass.OLLAMA: "Ollama"
+  }
 
-  st.session_state.model_class = selected_model
-  return selected_model
+  display_options = ["Selecione um modelo..."] + [label_map[m] for m in model_options]
+  selected_label = st.selectbox("Escolha o modelo:", display_options)
+
+  if selected_label != "Selecione um modelo...":
+    selected_model = model_options[display_options.index(selected_label) - 1]
+    st.session_state.model_class = selected_model
+  else:
+    st.session_state.model_class = None
+    st.session_state.flow_selected = None 
 
 def start_assistant():
   if "flow_selected" not in st.session_state:
@@ -63,4 +55,7 @@ def start_assistant():
     docs.render()
 
 select_model_class()
-start_assistant()
+
+# Só mostra a opção de fluxo após o modelo ser selecionado
+if st.session_state.model_class is not None:
+  start_assistant()
