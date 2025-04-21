@@ -9,6 +9,8 @@ from langchain_core.prompts import MessagesPlaceholder
 from langchain.chains.retrieval import create_retrieval_chain
 from langchain.chains.history_aware_retriever import create_history_aware_retriever
 from langchain.chains.combine_documents import create_stuff_documents_chain
+from langchain.schema import HumanMessage, AIMessage
+
 
 import os
 import tempfile
@@ -17,6 +19,18 @@ from enum import Enum
 class PromptType(Enum):
   CONTEXT = "CONTEXT"
   QA = "QA"
+
+def session_flow():
+  if "chat_history" not in st.session_state:
+    st.session_state.chat_history = [
+      AIMessage(content="Olá, sou seu assistente virtual! Como posso ajudar?")
+    ]
+  
+  if "docs_list" not in st.session_state:
+    st.session_state.docs_list = None
+
+  if "retriever" not in st.session_state:
+    st.session_state.retriever = None
 
 # Fluxo de upload
 def upload_flow():
@@ -31,7 +45,6 @@ def upload_flow():
     st.stop()
   
   return uploads
-
 
 # Carrega PDFs enviados pelo usuário, salva temporariamente no disco
 # e transforma cada um em documentos utilizáveis pelo LangChain
@@ -123,6 +136,13 @@ def config_rag_chain(model, retriever):
 def render():
   st.header("Converse com documentos")
   uploads = upload_flow()
+  session_flow()
+  
+  # Exibe o histórico de mensagens
+  for message in st.session_state.chat_history:
+    with st.chat_message("AI" if isinstance(message, AIMessage) else "Human"):
+      st.write(message.content)
+  
   retriever = config_retriever(uploads)
   model_class = model_choice(st.session_state.model_class)
 
