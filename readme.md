@@ -8,6 +8,8 @@ Além disso, o LLM-ConvoBotAI agora conta com um novo fluxo interativo que permi
 
 Esse diferencial torna o projeto mais flexível e poderoso, permitindo interações tanto informais quanto análises de conteúdo mais estruturadas.
 
+![Exemplo de Prompt](./prompt-example.png)
+
 ## 🧠 Diferenças para o projeto anterior
 
 Diferente do projeto [AI-chatbot](https://github.com/Abiscula/AI-chatbot) que implementei com o Groq, este oferece maior flexibilidade na escolha do modelo de linguagem, permitindo ao usuário selecionar entre uma ampla variedade de LLMs (como GPT-3, Phi-3, entre outros), conforme suas necessidades.
@@ -76,15 +78,15 @@ Substitua seu_token_da_hugging_face pelo seu token da API da Hugging Face, que p
 
 Para usar o Ollama, você precisará instalar o aplicativo Ollama localmente.
 
-   1.	Instale o Ollama:
-   •	Para Windows: Faça o download e instale o Ollama a partir do site oficial do Ollama.
-   •	Para MacOS e Linux: Utilize o Homebrew para instalar o Ollama:
+1.  Instale o Ollama:
+    • Para Windows: Faça o download e instale o Ollama a partir do site oficial do Ollama.
+    • Para MacOS e Linux: Utilize o Homebrew para instalar o Ollama:
 
 ```bash
  brew install ollama
 ```
 
-   2.	Inicie o servidor Ollama:
+2.  Inicie o servidor Ollama:
 
 Execute o seguinte comando para iniciar o servidor Ollama em sua máquina:
 
