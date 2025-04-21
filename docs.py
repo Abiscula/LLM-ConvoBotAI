@@ -51,30 +51,29 @@ def upload_flow():
 # e transforma cada um em documentos utilizáveis pelo LangChain
 def config_retriever(uploads):
   docs = []
-  temp_dir = tempfile.TemporaryDirectory() # Cria um diretorio temporario
+  temp_dir = tempfile.TemporaryDirectory()  # Cria um diretório temporário para armazenar os arquivos
+
   for file in uploads:
-    temp_filepath = os.path.join(temp_dir.name, file.name) # Cria um caminho temporario
+    temp_filepath = os.path.join(temp_dir.name, file.name)  # Cria o caminho temporário para cada arquivo
     with open(temp_filepath, "wb") as f:
-      f.write(file.getbuffer())
-    loader = PyPDFLoader(temp_filepath)
-    docs.extend(loader.load()) # Carrega o arquivo e salva em docs (extend = foo.push(...arr) no js)
+      f.write(file.getbuffer())  # Salva o conteúdo do arquivo temporariamente
 
-    # Split (Divisao dos docs em pedaços de texto)
-    text_spitter = RecursiveCharacterTextSplitter(chunk_size=1000, chunk_overlap=200)
-    splits = text_spitter.split_documents(docs)
-
-    # Embedding
-    embeddings = HuggingFaceEmbeddings(model_name="BAAI/bge-m3")
-
-    # Armazenamento
-    vectorstore = FAISS.from_documents(splits, embeddings)
-    vectorstore.save_local("vectorstore/db_faiss")
-
-    # Configuração do retriever
-    retriever = vectorstore.as_retriever(search_type = "mmr",
-                                         search_kwargs = {"k": 3, "fetch_k": 4})
+    loader = PyPDFLoader(temp_filepath)  # Carrega o PDF
+    docs.extend(loader.load())  # Adiciona o conteúdo carregado à lista de documentos
     
-    return retriever
+  text_splitter = RecursiveCharacterTextSplitter(chunk_size=1000, chunk_overlap=200)  # Divide os documentos em pedaços menores
+  splits = text_splitter.split_documents(docs)  # Realiza a divisão real dos documentos
+
+  embeddings = HuggingFaceEmbeddings(model_name="BAAI/bge-m3")  # Embeddings para transformação de texto
+
+  vectorstore = FAISS.from_documents(splits, embeddings)  # Armazena os documentos vetorizados no FAISS
+  vectorstore.save_local("vectorstore/db_faiss")  # Salva o vetor no diretório local
+
+  retriever = vectorstore.as_retriever(
+    search_type="mmr",  # Tipo de busca (Maximum Marginal Relevance)
+    search_kwargs={"k": 3, "fetch_k": 4}  # Configura parâmetros de busca
+  )
+  return retriever  # Retorna o retriever configurado
   
 # Define o prompt de contextualização
 def context_prompt(token_s, token_e):
