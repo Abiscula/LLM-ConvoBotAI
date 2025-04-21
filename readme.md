@@ -6,6 +6,8 @@ Além disso, o LLM-ConvoBotAI agora conta com um novo fluxo interativo que permi
 • Conversar com o assistente (modo tradicional de chatbot)
 • Analisar um arquivo/documento com a ajuda da IA (modo análise)
 
+![Selecionar tipo de chat](./type-select.png)
+
 Esse diferencial torna o projeto mais flexível e poderoso, permitindo interações tanto informais quanto análises de conteúdo mais estruturadas.
 
 ![Exemplo de Prompt](./prompt-example.png)
@@ -13,6 +15,8 @@ Esse diferencial torna o projeto mais flexível e poderoso, permitindo interaç�
 ## 🧠 Diferenças para o projeto anterior
 
 Diferente do projeto [AI-chatbot](https://github.com/Abiscula/AI-chatbot) que implementei com o Groq, este oferece maior flexibilidade na escolha do modelo de linguagem, permitindo ao usuário selecionar entre uma ampla variedade de LLMs (como GPT-3, Phi-3, entre outros), conforme suas necessidades.
+
+![Selecionar modelo](./model-select.png)
 
 O suporte a diferentes provedores — Ollama, Hugging Face, e modelo manual local — permite que o chatbot seja executado em diversos sistemas operacionais com liberdade total de configuração.
 
