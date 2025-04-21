@@ -1,9 +1,12 @@
 import streamlit as st
-from shared import model_choice
+from shared import model_choice, ModelClass
 from langchain_community.document_loaders import PyPDFLoader
 from langchain.text_splitter import RecursiveCharacterTextSplitter
-from langchain.embeddings import HuggingFaceEmbeddings
-from langchain.vectorstores import FAISS
+from langchain_community.embeddings import HuggingFaceEmbeddings
+from langchain_community.vectorstores import FAISS
+from langchain_core.prompts import ChatPromptTemplate, PromptTemplate
+from langchain_core.prompts import MessagesPlaceholder
+
 
 import os
 import tempfile
@@ -53,10 +56,35 @@ def config_retriever(uploads):
     return retriever
   
 
+def prompt_define(model_class):
+  if model_class.model == ModelClass.HF_HUB:
+    token_s, token_e = "<|begin_of_text|><|start_header_id|>system<|end_header_id|>", "<|eot_id|><|start_header_id|>assistant<|end_header_id|>"
+  else:
+    token_s, token_e = "", ""
 
+  # Prompt de contextualização
+  context_q_system_prompt = "Given the following chat history and the follow-up question which might reference " \
+  "context in the chat history, formulate a standalone question which can be understood without the chat history. " \
+  "Do NOT answer the question, just reformulate it if needed and otherwise return it as is."
+
+  context_q_system_prompt = token_s + context_q_system_prompt
+  context_q_user_prompt = "Question: {input}" + token_e
+  context_q_prompt = ChatPromptTemplate.from_messages(
+    [
+      ("system", context_q_system_prompt),
+      MessagesPlaceholder("chat_history"),
+      ("human", context_q_user_prompt),
+    ]
+  )
+  return context_q_system_prompt, context_q_user_prompt, context_q_prompt
+  
+def config_rag_chain(model, retriever):
+  system_prompt, user_prompt, context_prompt = prompt_define(model)
 
 def render():
   st.header("Converse com documentos")
   uploads = upload_flow()
   retriever = config_retriever(uploads)
-  model = model_choice(st.session_state.model_class)
+  model_class = model_choice(st.session_state.model_class)
+
+  config_rag_chain(model_class, retriever)
