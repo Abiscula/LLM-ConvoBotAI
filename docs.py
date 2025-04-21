@@ -24,7 +24,7 @@ class PromptType(Enum):
 def session_flow():
   if "chat_history" not in st.session_state:
     st.session_state.chat_history = [
-      AIMessage(content="Olá, sou seu assistente virtual! Como posso ajudar?")
+      AIMessage(content="Olá, sou um assistente virtual! Como posso ajudar?")
     ]
   
   if "docs_list" not in st.session_state:
@@ -42,7 +42,7 @@ def upload_flow():
   )
   
   if not uploads:
-    st.info("Por favor, envie algum arquivo para continuar")
+    st.info("Envie um ou mais arquivos PDF para começar a conversa.")
     st.stop()
   
   return uploads
@@ -60,7 +60,7 @@ def config_retriever(uploads):
 
     loader = PyPDFLoader(temp_filepath)  # Carrega o PDF
     docs.extend(loader.load())  # Adiciona o conteúdo carregado à lista de documentos
-    
+
   text_splitter = RecursiveCharacterTextSplitter(chunk_size=1000, chunk_overlap=200)  # Divide os documentos em pedaços menores
   splits = text_splitter.split_documents(docs)  # Realiza a divisão real dos documentos
 
@@ -146,7 +146,7 @@ def show_source(result):
       st.caption(doc.page_content)
 
 def render():
-  st.header("Converse com documentos")
+  st.header("Fale com seus documentos")
   uploads = upload_flow()
   session_flow()
   
