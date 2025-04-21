@@ -15,6 +15,7 @@ from langchain.schema import HumanMessage, AIMessage
 import os
 import tempfile
 from enum import Enum
+import time
 
 class PromptType(Enum):
   CONTEXT = "CONTEXT"
@@ -54,7 +55,7 @@ def config_retriever(uploads):
   for file in uploads:
     temp_filepath = os.path.join(temp_dir.name, file.name) # Cria um caminho temporario
     with open(temp_filepath, "wb") as f:
-      f.write(file.getValue())
+      f.write(file.getbuffer())
     loader = PyPDFLoader(temp_filepath)
     docs.extend(loader.load()) # Carrega o arquivo e salva em docs (extend = foo.push(...arr) no js)
 
@@ -133,6 +134,18 @@ def config_rag_chain(model, retriever):
   )
   return rag_chain
 
+#Mostrar a fonte da resposta
+def show_source(result):
+  sources = result["context"]
+  for idx, doc in enumerate(sources):
+    source = doc.metadata["source"]
+    file = os.path.basename(source)
+    page = doc.metadata.get("page", "Página não especificada")
+
+    ref = f":link: Fonte {idx}: *{file} - p. {page}*"
+    with st.popover(ref):
+      st.caption(doc.page_content)
+
 def render():
   st.header("Converse com documentos")
   uploads = upload_flow()
@@ -142,8 +155,29 @@ def render():
   for message in st.session_state.chat_history:
     with st.chat_message("AI" if isinstance(message, AIMessage) else "Human"):
       st.write(message.content)
-  
-  retriever = config_retriever(uploads)
+
+  start = time.time()
+  user_query = st.chat_input("Digite sua mensagem...")
   model_class = model_choice(st.session_state.model_class)
 
-  rag_chain = config_rag_chain(model_class, retriever)
+  if user_query is not None and user_query != "" and uploads is not None:
+    st.session_state.chat_history.append(HumanMessage(content=user_query))
+
+    with st.chat_message("Human"):
+      st.markdown(user_query)
+
+    with st.chat_message("AI"):
+      if st.session_state.docs_list != uploads:
+        st.session_state.docs_list = uploads
+        st.session_state.retriever = config_retriever(uploads)
+      
+      rag_chain = config_rag_chain(model_class, st.session_state.retriever)
+      
+      result =  rag_chain.invoke({"input": user_query, "chat_history": st.session_state.chat_history})
+      resp =  result["answer"]
+
+      st.write(resp)
+      show_source(result)
+    st.session_state.chat_history.append(AIMessage(content=resp))
+  end = time.time()
+  print(f"Tempo de execução: {end - start:.2f} segundos")
